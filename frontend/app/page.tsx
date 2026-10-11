@@ -436,7 +436,15 @@ export default function Home() {
   }
 
   async function handleUpdateTrade(tradeId: number) {
-    if (!entryDatetime || !exitDatetime) return;
+    if (!entryDatetime || !exitDatetime) {
+      setTradeError("Both entry and exit dates are required.");
+      return;
+    }
+
+    if (new Date(exitDatetime) < new Date(entryDatetime)) {
+      setTradeError("Exit date cannot be before entry date.");
+      return;
+    }
 
     const tradeData = {
       symbol,
