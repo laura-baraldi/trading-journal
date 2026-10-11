@@ -567,8 +567,41 @@ describe("TradesPage", () => {
         await clickEdit();
 
         fireEvent.click(screen.getByRole("button", { name: "Save trade" }));
+        expect(
+            screen.getByText("Both entry and exit dates are required.")
+        ).toBeInTheDocument();
 
         expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+        
+    test("shows an error when updating a trade with reversed dates", async () => {
+        const invalidTrade = makeTrade({
+            entryDatetime: "2026-08-12T12:00",
+            exitDatetime: "2026-08-12T10:00",
+        });
+
+        await renderLoadedPage([invalidTrade]);
+        await clickEdit();
+
+        fireEvent.click(screen.getByRole("button", { name: "Save trade" }));
+
+        expect(
+            screen.getByText("Exit date cannot be before entry date.")
+        ).toBeInTheDocument();
+
+        expect(
+            fetchMock.mock.calls.some(
+                ([url, options]) =>
+                    String(url).endsWith("/trades/1") &&
+                    options?.method === "PATCH"
+            )
+        ).toBe(false);
+
+        fireEvent.click(screen.getByRole("button", { name: "OK" }));
+
+        expect(
+            screen.queryByText("Exit date cannot be before entry date.")
+        ).not.toBeInTheDocument();
     });
 
     test("updates trade and reloads after success", async () => {
