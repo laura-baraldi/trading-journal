@@ -226,7 +226,7 @@ This prevents the shared dataset from being reset while the demo has recently be
 
 ## Automatic reset
 
-A GitHub Actions workflow periodically runs `demo.py`.
+A GitHub Actions workflow runs the demo reset script every hour.
 
 The script:
 
@@ -234,11 +234,19 @@ The script:
 2. reads the latest demo activity
 3. checks whether the account has been inactive for at least 30 minutes
 4. skips the reset if the demo was recently active
-5. otherwise removes modified demo trades and accounts
+5. otherwise removes existing demo trades and accounts
 6. recreates the original demo account
-7. recreates the sample trade dataset
+7. generates and inserts the 120 sample trades
 
-This allows visitors to modify the demo freely while keeping the environment reusable for future visitors.
+### Manual reset
+
+The workflow also supports manually triggering a reset through GitHub Actions using `workflow_dispatch`.
+
+A `force_reset` input allows an authorised manual run to bypass the inactivity check and immediately restore the demo dataset.
+
+When `force_reset` is disabled, the regular inactivity check remains in place.
+
+Both automatic and manual resets use the same dataset generation and restoration logic.
 
 ---
 
