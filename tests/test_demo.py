@@ -389,3 +389,26 @@ def test_reset_demo_if_inactive_skips(
         "Demo is active. Reset skipped."
         in output
     )
+
+def test_reset_demo_if_inactive_forces_reset(
+    capsys,
+):
+    with patch.dict(
+        "os.environ",
+        {"FORCE_DEMO_RESET": "true"},
+    ):
+        with patch(
+            "demo.should_reset_demo",
+        ) as mock_should_reset:
+            with patch(
+                "demo.reset_demo_data",
+            ) as mock_reset:
+                reset_demo_if_inactive()
+
+    mock_should_reset.assert_not_called()
+    mock_reset.assert_called_once_with()
+
+    output = capsys.readouterr().out
+
+    assert "Forced demo reset requested." in output
+    assert "Demo data reset." in output
