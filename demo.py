@@ -442,6 +442,17 @@ def should_reset_demo():
 
 
 def reset_demo_if_inactive():
+    force_reset = (
+        os.getenv("FORCE_DEMO_RESET", "").lower()
+        == "true"
+    )
+
+    if force_reset:
+        print("Forced demo reset requested.")
+        reset_demo_data()
+        print("Demo data reset.")
+        return
+
     if should_reset_demo():
         reset_demo_data()
         print("Demo data reset.")
