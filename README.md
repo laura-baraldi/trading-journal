@@ -559,69 +559,41 @@ A separate scheduled workflow runs the demo reset script periodically and restor
 ```text
 trading-journal/
 │
-├── api.py
-│   FastAPI application setup, middleware, exception handlers and router registration
-│
-├── auth.py
-│   Authentication and demo activity helpers
-│
-├── rate_limit.py
-│   SlowAPI configuration and per-user/IP rate-limit key selection
-│
-├── calculations.py
-│   R-multiple, dashboard and calendar calculations
-│
-├── routes/
-│   FastAPI route modules
+├── backend/
+│   ├── api.py
+│   │   FastAPI application setup, middleware, exception handlers and router registration
 │   │
-│   ├── accounts.py
-│   │   Account CRUD endpoints
+│   ├── auth.py
+│   │   Authentication and demo activity helpers
 │   │
-│   ├── analytics.py
-│   │   Statistics and calendar endpoints
+│   ├── rate_limit.py
+│   │   SlowAPI configuration and per-user/IP rate-limit key selection
 │   │
-│   ├── csv_imports.py
-│   │   CSV preview, validation and import endpoints
+│   ├── calculations.py
+│   │   R-multiple, dashboard and calendar calculations
 │   │
-│   └── trades.py
-│       Trade CRUD and paginated trade-history endpoints
-│
-├── schemas/
-│   Pydantic request and response models
+│   ├── routes/
+│   │   FastAPI route modules
 │   │
-│   ├── accounts.py
-│   │   Account schemas
+│   ├── schemas/
+│   │   Pydantic request and response models
 │   │
-│   └── trades.py
-│       Trade schemas and validation
-│
-├── database/
-│   Supabase data-access layer
+│   ├── database/
+│   │   Supabase data-access layer
 │   │
-│   ├── client.py
-│   │   Supabase configuration, authenticated clients and database error handling
+│   ├── imports/
+│   │   CSV reading, mapping, normalisation and validation
 │   │
-│   ├── accounts.py
-│   │   Account queries and persistence
+│   ├── demo.py
+│   │   Demo dataset generation and reset logic
 │   │
-│   └── trades.py
-│       Trade persistence and metric queries
-│
-├── imports/
-│   CSV reading, mapping, normalisation and validation
-│
-├── demo.py
-│   Demo dataset generation and reset logic
-│
-├── tests/
-│   Backend unit tests organised by application module
+│   ├── tests/
+│   │   Backend unit and integration tests
 │   │
-│   └── integration/
-│       Supabase and RLS integration tests
+│   ├── requirements.txt
+│   └── pyproject.toml
 │
 ├── frontend/
-│   Next.js web application
-│   │
 │   ├── app/
 │   │   Pages and page tests
 │   │
@@ -635,9 +607,13 @@ trading-journal/
 │   │   Playwright end-to-end tests and CSV fixtures
 │   │
 │   ├── playwright.config.ts
-│   │   Playwright projects, authentication setup and browser configuration
-│   │
 │   └── ...
+│
+├── supabase/
+│   └── migrations/
+│
+├── legacy-cli/
+│   Original command-line implementation
 │
 ├── .github/
 │   └── workflows/
@@ -646,11 +622,7 @@ trading-journal/
 │       ├── e2e-tests.yml
 │       └── demo-reset.yml
 │
-├── legacy-cli/
-│   Original command-line implementation
-│
-├── requirements.txt
-├── pyproject.toml
+├── .gitignore
 ├── .env.example
 └── README.md
 ```
@@ -694,6 +666,12 @@ On Windows PowerShell, use `npx.cmd` instead of `npx`.
 
 ## Backend
 
+Move into the backend directory:
+
+```bash
+cd backend
+```
+
 Install Python dependencies:
 
 ```bash
@@ -719,7 +697,7 @@ Demo credentials must remain server-side and must never be exposed through front
 Start the FastAPI development server:
 
 ```bash
-uvicorn api:app --reload
+python -m uvicorn api:app --reload
 ```
 
 The backend normally runs on:
@@ -774,24 +752,14 @@ http://localhost:3000
 From the project root:
 
 ```bash
+cd backend
 python -m pytest tests
 ```
 
 With coverage:
 
 ```bash
-python -m pytest tests \
-  --cov=api \
-  --cov=auth \
-  --cov=database \
-  --cov=calculations \
-  --cov=demo \
-  --cov=imports \
-  --cov=routes \
-  --cov=schemas \
-  --cov=rate_limit \
-  --cov-branch \
-  --cov-report=term-missing
+python -m pytest tests --cov=api --cov=auth --cov=database --cov=calculations --cov=demo --cov=imports --cov=routes --cov=schemas --cov=rate_limit --cov-branch --cov-report=term-missing
 ```
 
 ## Integration tests
@@ -801,7 +769,7 @@ Supabase integration tests require the relevant test-user credentials to be conf
 They are located in:
 
 ```text
-tests/integration/
+backend/tests/integration/
 ```
 
 ---
@@ -838,13 +806,14 @@ npm run build
 
 Playwright E2E tests require both the FastAPI backend and Next.js frontend to be running locally.
 
-From the project root, start the backend:
+Start the backend from the project root:
 
 ```bash
+cd backend
 python -m uvicorn api:app --reload
 ```
 
-In another terminal:
+In another terminal, start the frontend:
 
 ```bash
 cd frontend
