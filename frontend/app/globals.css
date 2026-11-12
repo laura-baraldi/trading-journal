@@ -30,14 +30,17 @@
 }
 
 /*
- * Fluid root font size, based on viewport width only.
+ * Fluid root font size for desktop, based on viewport width only.
  *   1280px wide  -> ~11px
  *   1536px wide  -> ~13px
  *   1920px wide  -> 16px (unchanged)
  *   2400px+ wide -> capped at 17px
+ *
+ * This scaling is intentionally preserved on desktop.
  */
 html {
   font-size: clamp(10px, 0.78vw + 1px, 17px);
+
   /* Hide the page scrollbar (scrolling with wheel/touchpad still works) */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* old Edge/IE */
@@ -48,9 +51,38 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+/*
+ * Mobile must use a stable root font size.
+ * The desktop fluid scaling makes rem-based dimensions and text
+ * progressively smaller on narrow screens, compressing the interface.
+ */
+@media (max-width: 767px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Keep element dimensions predictable and prevent padding from increasing widths. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
+  min-width: 320px;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
+
   /* Use the Geist font loaded in layout.tsx, with Arial as a fallback */
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Prevent media elements from exceeding their parent container. */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
 }
