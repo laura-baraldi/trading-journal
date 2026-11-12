@@ -19,8 +19,23 @@
   }
 }
 
+/*
+ * Fluid root font size, based on viewport width only.
+ * Tailwind spacing, text and sizing utilities are all in rem, so scaling the
+ * root font size scales the whole UI proportionally.
+ *   ~1280px wide -> 12px
+ *   ~1424px wide -> ~12.9px
+ *   1920px wide  -> 16px
+ *   2560px+ wide -> capped at 17px
+ * If text feels too small, raise the offset (4px -> 5px adds ~1px everywhere).
+ */
+html {
+  font-size: clamp(12px, 0.625vw + 4px, 17px);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Use the Geist font loaded in layout.tsx, with Arial as a fallback */
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
