@@ -12,6 +12,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * Minimum size for the SMALL text only (text-xs, text-sm).
+ * Everything else keeps scaling with the root font size.
+ * On 1920px+ screens these have no effect: the rem value is already bigger.
+ */
+@theme {
+  --text-xs: max(0.75rem, 11px);
+  --text-sm: max(0.875rem, 12.5px);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -21,16 +31,21 @@
 
 /*
  * Fluid root font size, based on viewport width only.
- * Tailwind spacing, text and sizing utilities are all in rem, so scaling the
- * root font size scales the whole UI proportionally.
- *   ~1280px wide -> 12px
- *   ~1424px wide -> ~12.9px
- *   1920px wide  -> 16px
- *   2560px+ wide -> capped at 17px
- * If text feels too small, raise the offset (4px -> 5px adds ~1px everywhere).
+ *   1280px wide  -> ~11px
+ *   1536px wide  -> ~13px
+ *   1920px wide  -> 16px (unchanged)
+ *   2400px+ wide -> capped at 17px
  */
 html {
-  font-size: clamp(12px, 0.625vw + 4px, 17px);
+  font-size: clamp(10px, 0.78vw + 1px, 17px);
+  /* Hide the page scrollbar (scrolling with wheel/touchpad still works) */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+
+/* Hide the page scrollbar in Chrome, Edge and Safari */
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
