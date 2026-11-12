@@ -2,143 +2,83 @@
 
 A full-stack trading journal for recording trades, managing trading accounts, analysing performance and visualising results over time.
 
-Built with **Next.js, React, TypeScript, FastAPI, Supabase and PostgreSQL**, with authentication, automated testing, responsive design and deployed frontend/backend services.
+Built with **Next.js, React, TypeScript, FastAPI, Supabase and PostgreSQL**. The application includes authentication, CSV import, server-side pagination, performance analytics, a monthly trading calendar, automated testing and a public demo.
 
 ## Live Demo
 
-A deployed demo version is available so the application can be explored without creating an account.
-
 **[Try the live demo](https://trading-journal-puce-one.vercel.app)**
 
-From the login page, select **Try demo** to enter a pre-populated trading account containing sample trades across multiple instruments.
+From the login page, select **Try demo** to access a pre-populated trading account without creating an account. The demo contains sample trades across multiple instruments and supports the main application workflows.
 
-The demo uses a shared authenticated Supabase account. Its data is automatically restored after periods of inactivity so visitors can freely create, edit and delete demo data without permanently changing the initial dataset.
+The demo uses a shared authenticated Supabase account. Its data is automatically restored after periods of inactivity, allowing visitors to create, edit and delete demo data without permanently changing the initial dataset.
 
 ---
 
 ## Why I Built This
 
-Tracking trades manually often makes it difficult to see the bigger picture — what is actually working, what is not, and how performance changes over time.
+Tracking trades manually can make it difficult to understand what is working, what is not, and how performance changes over time.
 
-The project started as a simple Python CLI built around that need: log trades, calculate R-multiples and review aggregate statistics.
+The project started as a Python command-line application for logging trades, calculating R-multiples and reviewing aggregate statistics. As the requirements grew to include multiple accounts, real P/L tracking, persistent data and performance visualisation, it evolved into the full-stack application it is today.
 
-As the requirements grew — multiple accounts, real P/L tracking alongside R and performance visualisation — the project evolved into the full-stack application it is today.
+The original CLI is retained in `legacy-cli/` as a record of that progression.
 
----
+## Features
 
-## Overview
+### Trading and account management
 
-The application is designed to make trading data easier to record, organise and analyse by storing each trade together with its risk, result, P/L and execution dates.
+- Supabase authentication and protected API endpoints
+- Multiple trading accounts with account CRUD operations
+- Trade creation, editing and deletion
+- Long and short positions
+- Entry and exit timestamps, trade-date validation and account-level organisation
+- Automatic R-multiple calculation and P/L tracking
 
-Authenticated users can:
+### Import and data management
 
-- create and manage multiple trading accounts
-- record trades
-- import trades automatically from CSV files
-- edit and delete existing trades
-- browse large trade histories with server-side pagination
-- calculate trade results in R
-- track profit and loss
-- view aggregate trading statistics
-- visualise performance over time
-- filter trade history and analytics using preset or custom date ranges
-- review daily trading results in a monthly calendar
-- keep data isolated between users
-- access the application from desktop and mobile devices
-
-The current application is the result of several iterations, gradually introducing persistence, APIs, authentication, responsive interfaces, automated testing and stronger data protection.
-
----
-
-# Main Features
-
-- User authentication with Supabase Auth
-- Protected FastAPI endpoints
-- API rate limiting with SlowAPI
-- Per-user rate limits for authenticated endpoints
-- IP-based rate limiting for public demo login
-- Multiple trading accounts
-- Account CRUD operations
-- Trade CRUD operations
-- Server-side trade pagination
-- Automatic CSV trade import
-- Automatic delimiter and column mapping
+- CSV trade import with automatic delimiter detection
+- Automatic mapping of common broker column names
 - Numeric and datetime format normalisation
-- CSV row validation and bulk persistence
-- Long and short trades
-- Automatic R-multiple calculation
-- P/L tracking
-- Entry and exit timestamps
-- Trade date validation
-- Trading statistics
-- Performance chart
-- Monthly trading calendar
-- Daily P/L, R-multiple and trade-count summaries
-- Backend aggregation across complete filtered datasets
-- Preset and custom date-range filtering
-- Responsive mobile and desktop interface
-- User-scoped database queries
-- PostgreSQL Row Level Security
+- Row-level validation and structured import errors
+- Bulk persistence after successful validation
+- Server-side trade pagination (20 records per page)
+
+### Analytics and visualisation
+
+- Aggregate trading statistics and performance charts
+- R-multiple and P/L analysis
+- Preset date filters (all time, last 30 days, last 90 days) and custom date ranges
+- Monthly trading calendar with daily P/L, R-multiple and trade-count summaries
+- Backend aggregation across the complete filtered dataset, not only the currently displayed page
+
+### Security and reliability
+
+- User-scoped database queries and PostgreSQL Row Level Security (RLS)
+- Account ownership checks before trade persistence
+- API rate limiting with SlowAPI
+- Per-user rate limits for authenticated endpoints and IP-based limits for public demo login
 - Frontend and backend validation
 - Controlled API error responses
-- Public demo mode
-- Automatic demo-data restoration
-- Automated frontend and backend testing
-- Supabase integration and RLS tests
-- Playwright end-to-end testing of core user flows
-- Shared authenticated browser state for E2E tests
-- GitHub Actions CI workflows
+- Automated frontend, backend, integration and browser end-to-end tests
+- GitHub Actions workflows for CI, E2E tests and scheduled demo resets
+- Responsive desktop and mobile interface
 
 ---
 
-# Tech Stack
+## Tech Stack
 
-## Frontend
-
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS
-- Recharts
-- React DayPicker
-- Supabase JavaScript client
-
-## Backend
-
-- Python 3.11+
-- FastAPI
-- Pydantic
-- SlowAPI
-- Supabase Python client
-- PostgreSQL
-- python-dotenv
-
-## Testing
-
-- Pytest
-- pytest-cov
-- FastAPI `TestClient`
-- Vitest
-- React Testing Library
-- jsdom
-- V8 coverage
-- Playwright
-
-## Infrastructure and Development
-
-- Git
-- GitHub
-- GitHub Actions
-- Vercel
-- Supabase
-- Supabase CLI
-- Docker
-- ESLint
-- npm
+| Area                        | Technologies                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| Frontend                    | Next.js 16, React 19, TypeScript, Tailwind CSS, Recharts, React DayPicker             |
+| Backend                     | Python 3.11+, FastAPI, Pydantic, SlowAPI, python-dotenv                               |
+| Database and authentication | Supabase Auth, Supabase JavaScript and Python clients, PostgreSQL, Row Level Security |
+| Backend testing             | Pytest, pytest-cov, FastAPI `TestClient`                                              |
+| Frontend testing            | Vitest, React Testing Library, jsdom, V8 coverage                                     |
+| End-to-end testing          | Playwright                                                                            |
+| Tooling and deployment      | Git, GitHub Actions, Vercel, Supabase CLI, Docker, ESLint, npm                        |
 
 ---
 
-# Architecture
+## Architecture
 
 ```text
 ┌──────────────────────────────┐
@@ -147,7 +87,7 @@ The current application is the result of several iterations, gradually introduci
 │ React · TypeScript · Charts  │
 └──────────────┬───────────────┘
                │
-               │ HTTP + Bearer token
+               │ HTTP requests + Bearer token
                ▼
 ┌──────────────────────────────┐
 │        FastAPI backend       │
@@ -158,7 +98,7 @@ The current application is the result of several iterations, gradually introduci
                │
                ▼
 ┌──────────────────────────────┐
-│      Data-access layer       │
+│        Data-access layer     │
 │                              │
 │ Accounts · Trades · Queries  │
 └──────────────┬───────────────┘
@@ -171,23 +111,101 @@ The current application is the result of several iterations, gradually introduci
 └──────────────────────────────┘
 ```
 
-The frontend communicates with the FastAPI backend for application data.
+The frontend communicates with FastAPI for application data. The backend is organised into dedicated routers, Pydantic schemas and database modules:
 
-The backend is organised into dedicated FastAPI routers, Pydantic schemas and database modules. Route handlers manage HTTP concerns, schemas validate request and response data, and the database package isolates Supabase persistence and query logic.
+- **Routers** handle HTTP endpoints and coordinate application operations.
+- **Schemas** validate request and response data.
+- **Database modules** isolate Supabase persistence and query logic.
+- **Authentication** verifies Supabase access tokens before protected operations.
+- **Business logic** handles calculations, CSV processing and data aggregation.
 
-Authenticated requests contain the user's Supabase access token. The backend verifies the token and scopes database operations to the authenticated user.
-
-Supabase Row Level Security provides an additional database-level protection layer.
+Authenticated requests include the user's Supabase bearer token. FastAPI verifies the token and scopes database operations to the authenticated user. PostgreSQL Row Level Security provides an additional database-level protection layer.
 
 ---
 
-# Demo System
+## Authentication and Data Isolation
 
-The application includes a public demo mode designed to make the project easy to evaluate without requiring registration.
+Authentication is handled by Supabase Auth. The frontend sends the current user's access token with protected API requests, and the backend verifies the token before accessing account or trade data.
 
-The login page exposes a **Try demo** action.
+Database operations are scoped by the authenticated user ID. When creating a trade, the backend also verifies that the selected account belongs to that user. If the account does not exist or belongs to another user, the request is rejected with `404 Not Found`.
 
-The frontend requests a demo session from the FastAPI backend, while the demo account credentials remain server-side and are never exposed through `NEXT_PUBLIC_*` environment variables.
+PostgreSQL Row Level Security adds another layer of isolation at database level. Supabase integration tests use separate test users to verify that one user cannot access or modify another user's data.
+
+This means data isolation is enforced at both the application and database layers.
+
+---
+
+## CSV Import
+
+Authenticated users can select an account and import trade history from a CSV file. The importer is designed to handle exports with different column names and formatting rather than relying on one fixed broker template.
+
+The backend performs the import in stages:
+
+1. Validates the uploaded file and detects its delimiter.
+2. Maps common broker column names to the journal's trade fields.
+3. Detects and normalises numeric and datetime formats.
+4. Validates each row and calculates R when a stop loss is present.
+5. Persists the validated trades in a bulk operation.
+
+Supported formats include dot and comma decimal separators, common currency symbols, ISO and broker datetime formats, mixed datetime formats and optional stop-loss values.
+
+If required columns are missing or ambiguous, or if a row contains invalid data, the import is rejected before any trades are saved. The API returns structured error details identifying the affected row, column and field. The selected account is checked against the authenticated user before persistence.
+
+---
+
+## Performance Analytics, Filtering and Pagination
+
+The journal evaluates performance using both monetary P/L and R-multiple.
+
+R-multiple expresses a trade's result relative to its original risk, making trades with different position sizes and monetary values more comparable.
+
+For a long trade:
+
+```text
+R = (exit - entry) / (entry - stop)
+```
+
+For a short trade:
+
+```text
+R = (entry - exit) / (stop - entry)
+```
+
+The dashboard provides aggregate statistics and a chronological performance chart. Users can analyse all available data, the last 30 days, the last 90 days or a custom date range.
+
+### Complete analytics with paginated history
+
+Trade history is paginated on the server and returns 20 records per page. Dashboard statistics, however, are calculated across the complete selected dataset—not only the trades currently visible on the page or the recent trades shown on the dashboard.
+
+The backend retrieves the fields required for analytics in bounded batches, calculates the aggregate results and returns them to the frontend. This keeps the statistics complete without requiring the browser to load the entire trade history.
+
+The selected date range is applied consistently to dashboard statistics, chart data, recent trades and the full trade-history page. Changing the selected account or date range resets pagination to the first page.
+
+---
+
+## Monthly Trading Calendar
+
+The dashboard includes a monthly calendar built with React DayPicker. It summarises trading activity for the selected account and makes daily performance patterns easier to review.
+
+Each trading day can display:
+
+- Total P/L
+- Number of trades
+- Total R-multiple, when available
+
+Profitable and losing days use distinct visual states, and users can navigate between months without leaving the dashboard.
+
+Calendar aggregation is performed by the FastAPI backend for the complete requested month. The database layer retrieves the fields needed for the calculation in bounded batches, and the frontend receives daily aggregate values through a protected `/calendar` endpoint rather than calculating them from a partial trade list.
+
+Calendar data refreshes when the selected account or month changes and after a trade is created, edited or deleted.
+
+---
+
+## Demo System
+
+The public demo allows visitors to explore the application without registering. The login page exposes a **Try demo** action, which requests a demo session from the FastAPI backend.
+
+Demo account credentials remain server-side and are never exposed through `NEXT_PUBLIC_*` environment variables.
 
 ```text
 Visitor
@@ -205,456 +223,253 @@ Supabase Auth
 Demo session
 ```
 
-The public `/demo-login` endpoint is rate-limited by client IP. Once the demo session has been created, its protected API requests are authenticated normally and use the demo user's ID for per-user rate limiting.
-
 The demo account starts with a pre-populated trading account and sample trades covering:
 
-- XAUUSD
-- EURUSD
-- GBPUSD
-- NAS100
-- long and short positions
-- winning trades
-- losing trades
-- breakeven trades
+- XAUUSD, EURUSD, GBPUSD and NAS100
+- Long and short positions
+- Winning, losing and breakeven trades
 
-## Demo activity tracking
+### Activity tracking and rate limiting
 
-Protected API requests made by the demo user update a `demo_state` record containing the latest activity timestamp.
+The public `/demo-login` endpoint is rate-limited by client IP because the visitor is not authenticated yet. Once the demo session is created, protected requests are authenticated normally and use the demo user's ID for per-user rate limiting.
 
-This prevents the shared dataset from being reset while the demo has recently been in use.
+Protected API requests made by the demo user update a `demo_state` record containing the latest activity timestamp. This prevents the shared dataset from being reset while the demo has recently been in use.
 
-## Automatic reset
+### Automatic and manual reset
 
-A GitHub Actions workflow runs the demo reset script every hour.
+A GitHub Actions workflow runs the demo reset script every hour. The script:
 
-The script:
+1. Authenticates as the demo user.
+2. Reads the latest demo activity.
+3. Checks whether the account has been inactive for at least 30 minutes.
+4. Skips the reset if the demo was recently active.
+5. Otherwise removes the existing demo trades and accounts.
+6. Recreates the original demo account.
+7. Generates and inserts the 120 sample trades.
 
-1. authenticates as the demo user
-2. reads the latest demo activity
-3. checks whether the account has been inactive for at least 30 minutes
-4. skips the reset if the demo was recently active
-5. otherwise removes existing demo trades and accounts
-6. recreates the original demo account
-7. generates and inserts the 120 sample trades
+The workflow can also be triggered manually through `workflow_dispatch`. An authorised `force_reset` input can bypass the inactivity check and immediately restore the demo dataset. When `force_reset` is disabled, the regular inactivity check remains in place.
 
-### Manual reset
-
-The workflow also supports manually triggering a reset through GitHub Actions using `workflow_dispatch`.
-
-A `force_reset` input allows an authorised manual run to bypass the inactivity check and immediately restore the demo dataset.
-
-When `force_reset` is disabled, the regular inactivity check remains in place.
-
-Both automatic and manual resets use the same dataset generation and restoration logic.
+Automatic and manual resets use the same dataset generation and restoration logic.
 
 ---
 
-# Validation
+## Validation and API Error Handling
 
-Validation happens at multiple layers.
+Validation is performed at more than one layer. The frontend provides immediate feedback and prevents incomplete forms from being submitted, but the backend independently validates incoming data with FastAPI and Pydantic. The API does not rely on the frontend to send valid values.
 
-## Frontend
+Examples of backend validation include:
 
-The UI prevents incomplete forms from being submitted and provides feedback before requests are sent.
+- Required entry and exit dates
+- Exit date cannot be before entry date
+- Valid trade direction
+- Non-empty trade symbol
+- Required account name
+- Required currency
+- Required starting balance
 
-## Backend
+The backend also converts authentication, resource, rate-limit and database failures into controlled HTTP responses.
 
-FastAPI and Pydantic validate incoming request data independently from the frontend.
+| Situation                                  | Response                  |
+| ------------------------------------------ | ------------------------- |
+| Invalid or expired token                   | `401 Unauthorized`        |
+| Missing or inaccessible resource           | `404 Not Found`           |
+| Rate limit exceeded                        | `429 Too Many Requests`   |
+| Database or authentication service failure | `503 Service Unavailable` |
 
-Examples include:
+SlowAPI handles rate-limit violations centrally. Database queries pass through a centralised execution helper; dependency failures are converted into `DatabaseError` and handled as `503 Service Unavailable` responses.
 
-- required entry and exit dates
-- exit date cannot be before entry date
-- valid trade direction
-- non-empty trade symbol
-- required account name
-- required currency
-- required starting balance
-
-The backend therefore does not rely on the frontend to provide valid data.
-
----
-
-# CSV Import
-
-Authenticated users can select an account and import trade history from a CSV file.
-
-The backend automatically:
-
-1. validates the file and detects its delimiter
-2. maps common broker column names to journal fields
-3. detects and normalises numeric and datetime formats
-4. validates every row and calculates R when a stop loss is present
-5. saves all validated trades in a bulk operation
-
-The importer supports dot and comma decimal separators, common currency symbols, ISO and broker datetime formats, mixed datetime formats and optional stop-loss values.
-
-If columns are missing or ambiguous, or if a row is invalid, the import is rejected before anything is saved. The API returns structured details identifying the affected column, row and field.
-
-The selected account is also checked against the authenticated user before persistence.
+This keeps API errors predictable and avoids exposing raw dependency errors to the frontend.
 
 ---
 
-# Authentication and Data Isolation
+## Automated Testing
 
-Authentication is handled by Supabase Auth.
+Testing covers individual units, API behaviour, database security and complete browser workflows.
 
-The frontend sends the current user's bearer token with protected API requests.
-
-The backend verifies that token and obtains the authenticated user's identity before accessing account or trade data.
-
-Authenticated API endpoints are rate-limited per user ID, while public endpoints such as `/demo-login` fall back to client IP-based limits. This keeps request limits isolated between authenticated users while still protecting unauthenticated entry points.
-
-Database operations are scoped by user ID.
-
-When creating a trade, the backend also verifies that the selected account belongs to the authenticated user before allowing the trade to be stored.
-
-If the account does not exist or belongs to another user, the request is rejected with a `404 Not Found` response.
-
-The project also includes Supabase integration tests that verify Row Level Security between separate test users, including attempts to access or modify another user's data.
-
-This provides protection at both the application and database layers.
-
----
-
-# Performance Analytics
-
-Trade performance can be evaluated using both P/L and R-multiple.
-
-For a long trade:
-
-```text
-R = (exit - entry) / (entry - stop)
-```
-
-For a short trade:
-
-```text
-R = (entry - exit) / (stop - entry)
-```
-
-Using R makes trades with different monetary values and position sizes comparable using the amount originally risked.
-
-The application also provides aggregate statistics and a chronological performance chart.
-
-Dashboard statistics are calculated by the backend across every trade belonging to the selected account, rather than only the five recent trades displayed in the dashboard table. The backend reads the required metrics in bounded batches so analytics remain complete without transferring an entire large trade history to the browser.
-
-Users can analyse all available data, the last 30 days, the last 90 days or a custom date range. The selected range is applied consistently to aggregate statistics, the performance chart, recent dashboard trades and the full trade-history page.
-
-Trade history is paginated on the server with 20 records per page. Changing the account or date range resets pagination to the first page, while incomplete or reversed custom ranges are rejected before a request is sent.
-
----
-
-# Trading Calendar
-
-The dashboard includes a responsive monthly calendar that summarises trading activity for the selected account.
-
-Each trading day displays:
-
-- total P/L
-- number of trades
-- total R when R-multiple data is available
-
-Profitable and losing days use distinct visual states, making daily performance patterns easier to identify. Users can navigate between months without leaving the dashboard.
-
-Calendar data is calculated by the FastAPI backend from trades whose entry timestamps fall within the requested month. The database layer retrieves only the fields required for the calculation and reads them in bounded batches. The frontend receives daily aggregate values through the protected `/calendar` endpoint rather than calculating them from a partial trade list.
-
-After a trade is created, edited or deleted, the dashboard automatically refreshes both its analytics and the displayed calendar month.
-
----
-
-# API Error Handling
-
-The backend converts authentication, resource, rate-limit and database failures into controlled HTTP responses.
-
-```text
-Invalid or expired token
-      ↓
-401 Unauthorized
-
-Missing or inaccessible resource
-      ↓
-404 Not Found
-
-Rate limit exceeded
-      ↓
-429 Too Many Requests
-
-Database or authentication service failure
-      ↓
-503 Service Unavailable
-```
-
-Rate-limit violations are handled centrally through SlowAPI and returned as `429 Too Many Requests` responses.
-
-Database queries pass through a centralised execution helper. Database failures are converted into `DatabaseError` and handled by FastAPI as `503 Service Unavailable` responses.
-
-This keeps error handling predictable across the API and avoids exposing raw dependency errors to the frontend.
-
----
-
-# Automated Testing
-
-Testing became a major part of the full-stack refactor.
-
-## Backend
+### Backend — Pytest
 
 Backend tests cover:
 
-- bearer-token handling
-- authentication
-- demo authentication
-- demo activity tracking
-- API endpoints
-- API rate limiting
-- per-user rate-limit isolation
-- IP fallback for unauthenticated rate limiting
-- account CRUD
-- trade CRUD
-- account ownership validation
-- request validation
-- R calculations
-- database transformations
-- database error handling
-- demo dataset generation
-- demo reset behaviour
-- CSV parsing and automatic column mapping
-- numeric and datetime normalisation
+- Bearer-token handling and authentication
+- Demo authentication and activity tracking
+- API endpoints and request validation
+- API rate limiting, per-user isolation and IP fallback
+- Account and trade CRUD operations
+- Account ownership checks
+- R-multiple calculations
+- Database transformations and error handling
+- Demo dataset generation and reset behaviour
+- CSV parsing, column mapping and value normalisation
 - CSV row validation and bulk persistence
-- server-side trade pagination
-- date-range query validation and filtering
-- complete dashboard aggregation across batched trade metrics
-- monthly calendar aggregation and batched database loading
+- Server-side trade pagination
+- Date-range query validation and filtering
+- Dashboard aggregation across the complete dataset and batched trade metrics
+- Monthly calendar aggregation and batched database loading
 
-External dependencies are mocked for unit tests where appropriate.
+External dependencies are mocked in unit tests where appropriate.
 
-## Integration tests
+### Supabase integration tests
 
 Separate integration tests communicate with Supabase and cover:
 
-- real database connectivity
+- Real database connectivity
 - Row Level Security
-- cross-user data isolation
+- Cross-user data isolation
 
-## Frontend
+These tests require the relevant test-user credentials and database configuration.
+
+### Frontend — Vitest and React Testing Library
 
 Frontend tests cover:
 
-- authentication flows
-- demo login
-- page behaviour
-- forms
-- user interactions
-- API requests
-- account management
-- trade management
-- loading and error states
-- statistics
-- chart behaviour
-- responsive components
-- reusable UI components
+- Authentication flows and demo login
+- Page behaviour, forms and user interactions
+- API requests and error/loading states
+- Account and trade management
+- Statistics and chart behaviour
+- Reusable and responsive UI components
 - CSV import success, loading and error states
-- import navigation
-- date preset and custom-range interactions
-- filtered dashboard and trade-history requests
-- pagination reset when filters change
-- calendar rendering, month navigation and responsive behaviour
-- calendar refresh after trade changes
+- Date preset and custom-range interactions
+- Filtered dashboard and trade-history requests
+- Pagination reset when filters change
+- Calendar rendering, month navigation and responsive behaviour
+- Calendar refresh after trade changes
 
-## End-to-end tests
+### End-to-end — Playwright
 
-Playwright end-to-end tests exercise the application through the browser while the real frontend and backend are running.
+Playwright tests exercise the running application through a real browser, covering complete flows across the frontend, backend and database.
 
 The E2E suite covers:
 
-- public demo login
-- account creation and deletion
-- trade creation, editing and deletion
-- valid CSV trade import
-- invalid CSV rejection
-- manual trade-form validation
-- dashboard statistics using deterministic trade data
+- Public demo login
+- Account creation and deletion
+- Trade creation, editing and deletion
+- Valid CSV import
+- Invalid CSV rejection
+- Manual trade-form validation
+- Dashboard statistics using deterministic trade data
 
-The dashboard statistics test creates an isolated account and known trades, then verifies exact values including:
+The dashboard statistics test creates an isolated account and known trades, then verifies exact values such as total trade count, win rate, P/L, account balance, total R and average R. This checks the full path from browser interaction through the API and database to the rendered dashboard.
 
-- total trade count
-- win rate
-- P/L
-- account balance
-- total R
-- average R
+#### Shared browser authentication state
 
-This checks the complete path from browser interaction through the API and database and back to the rendered dashboard.
+Authenticated E2E tests use a shared Playwright `storageState` generated by a dedicated setup project. The setup authenticates once and stores the browser session, avoiding repeated calls to the rate-limited public demo-login endpoint.
 
-Authenticated E2E tests use a shared Playwright `storageState` session. A dedicated setup project performs demo authentication once and stores the browser authentication state locally so each individual E2E test does not repeatedly call the rate-limited public demo-login endpoint.
+The public demo-login flow is tested separately from an unauthenticated browser state, so the login process itself is still exercised.
 
-The demo-login flow is tested separately without the saved authenticated state. This ensures the login process itself is still exercised from an unauthenticated browser session.
+E2E tests create temporary accounts with unique names and clean them up after execution. This keeps assertions deterministic and reduces dependence on existing demo data.
 
-E2E tests create temporary accounts with unique names and clean them up after execution so assertions do not depend on existing demo data.
-
-The generated authenticated browser state is stored under:
+The generated browser authentication state is stored in:
 
 ```text
 frontend/playwright/.auth/
 ```
 
-This directory is ignored by Git because browser authentication state can contain active session data and should not be committed.
+This directory is ignored by Git because it can contain active session data and must not be committed.
 
-During development, the frontend and backend unit-test suites reached **100% code coverage**.
+### Coverage
 
-Coverage is used as a development signal rather than as a replacement for meaningful behavioural, integration and end-to-end tests.
-
----
-
-# Continuous Integration
-
-GitHub Actions automatically checks the application on pushes and pull requests.
-
-## Backend workflow
-
-The backend workflow:
-
-- installs Python dependencies
-- runs the backend test suite
-- collects coverage, including the rate-limiting module
-- runs Supabase integration and RLS tests when the required secrets are configured
-
-## Frontend workflow
-
-The frontend workflow:
-
-- installs dependencies with `npm ci`
-- runs ESLint
-- runs the Vitest test suite with coverage
-- creates a production Next.js build
-
-## End-to-end workflow
-
-A dedicated Playwright workflow runs the browser E2E suite on GitHub Actions.
-
-The workflow:
-
-- runs on Ubuntu
-- installs Python dependencies
-- installs frontend dependencies
-- installs Playwright browsers and required system dependencies
-- starts the FastAPI backend
-- starts the Next.js frontend
-- authenticates the shared demo session through the Playwright setup project
-- runs the Chromium E2E suite
-
-Supabase and demo credentials are provided through GitHub Actions secrets rather than being committed to the repository.
-
-The workflow runs on pushes and pull requests.
-
-## Demo reset workflow
-
-A separate scheduled workflow runs the demo reset script periodically and restores the shared demo dataset when it has been inactive.
+During development, the frontend and backend unit-test suites reached **100% code coverage**. Coverage is used as a development signal alongside behavioural, integration and end-to-end tests—not as a replacement for them.
 
 ---
 
-# Repository Structure
+## Continuous Integration
+
+GitHub Actions runs automated checks on pushes and pull requests.
+
+### Backend workflow
+
+- Installs Python dependencies
+- Runs the backend test suite
+- Collects coverage, including branch coverage
+- Runs Supabase integration and RLS tests when the required secrets are configured
+
+### Frontend workflow
+
+- Installs dependencies with `npm ci`
+- Runs ESLint
+- Runs Vitest tests with coverage
+- Creates a production Next.js build
+
+### End-to-end workflow
+
+- Runs on Ubuntu
+- Installs Python and frontend dependencies
+- Installs Playwright browsers and required system dependencies
+- Starts the FastAPI backend and Next.js frontend
+- Authenticates the shared demo session through the Playwright setup project
+- Runs the Chromium E2E suite
+
+Supabase and demo credentials are provided through GitHub Actions secrets rather than committed to the repository.
+
+A separate scheduled workflow runs the demo reset script and restores the shared demo dataset when it has been inactive.
+
+---
+
+## Repository Structure
 
 ```text
 trading-journal/
 │
 ├── backend/
-│   ├── api.py
-│   │   FastAPI application setup, middleware, exception handlers and router registration
-│   │
-│   ├── auth.py
-│   │   Authentication and demo activity helpers
-│   │
-│   ├── rate_limit.py
-│   │   SlowAPI configuration and per-user/IP rate-limit key selection
-│   │
-│   ├── calculations.py
-│   │   R-multiple, dashboard and calendar calculations
-│   │
-│   ├── routes/
-│   │   FastAPI route modules
-│   │
-│   ├── schemas/
-│   │   Pydantic request and response models
-│   │
-│   ├── database/
-│   │   Supabase data-access layer
-│   │
-│   ├── imports/
-│   │   CSV reading, mapping, normalisation and validation
-│   │
-│   ├── demo.py
-│   │   Demo dataset generation and reset logic
-│   │
-│   ├── tests/
-│   │   Backend unit and integration tests
-│   │
+│   ├── api.py                 # FastAPI setup, middleware and router registration
+│   ├── auth.py                # Authentication and demo activity helpers
+│   ├── rate_limit.py          # SlowAPI configuration and rate-limit keys
+│   ├── calculations.py        # R, dashboard and calendar calculations
+│   ├── routes/                # FastAPI route modules
+│   ├── schemas/               # Pydantic request and response models
+│   ├── database/              # Supabase data-access layer
+│   ├── imports/               # CSV parsing, mapping and validation
+│   ├── demo.py                # Demo dataset generation and reset logic
+│   ├── tests/                 # Unit and integration tests
 │   ├── requirements.txt
 │   └── pyproject.toml
 │
 ├── frontend/
-│   ├── app/
-│   │   Pages and page tests
-│   │
-│   ├── components/
-│   │   Reusable UI components and tests
-│   │
-│   ├── lib/
-│   │   API and Supabase configuration
-│   │
-│   ├── e2e/
-│   │   Playwright end-to-end tests and CSV fixtures
-│   │
-│   ├── playwright.config.ts
-│   └── ...
+│   ├── app/                   # Pages and page tests
+│   ├── components/            # Reusable UI components and tests
+│   ├── lib/                   # API and Supabase configuration
+│   ├── e2e/                   # Playwright tests and CSV fixtures
+│   └── playwright.config.ts
 │
 ├── supabase/
-│   └── migrations/
+│   └── migrations/            # Database schema and RLS migrations
 │
-├── legacy-cli/
-│   Original command-line implementation
+├── legacy-cli/                # Original command-line implementation
 │
 ├── .github/
-│   └── workflows/
-│       ├── backend-tests.yml
-│       ├── frontend-tests.yml
-│       ├── e2e-tests.yml
-│       └── demo-reset.yml
+│   └── workflows/             # Backend, frontend, E2E and demo-reset workflows
 │
-├── .gitignore
 ├── .env.example
 └── README.md
 ```
 
 ---
 
-# Running the Project Locally
+## Running the Project Locally
 
-## Clone the repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/laurabaraldi98-lgtm/trading-journal.git
+git clone https://github.com/laura-baraldi/trading-journal.git
 cd trading-journal
 ```
 
----
-
-## Local Database
+### 2. Database (optional local setup)
 
 The database schema, constraints and Row Level Security policies are versioned in `supabase/migrations/`.
 
-Docker and the Supabase CLI are only required to recreate and test the Supabase database locally. They are not required when the application connects directly to a hosted Supabase project.
+Docker and the Supabase CLI are required only to recreate and test the database locally. They are not needed when connecting to a hosted Supabase project.
 
-Start the local database:
+Start the local Supabase database:
 
 ```bash
 npx supabase db start
 ```
 
-The migration files are applied automatically in timestamp order.
+The migration files are applied in timestamp order.
 
-Stop the local database:
+Stop the local Supabase stack:
 
 ```bash
 npx supabase stop
@@ -662,19 +477,12 @@ npx supabase stop
 
 On Windows PowerShell, use `npx.cmd` instead of `npx`.
 
----
+### 3. Backend
 
-## Backend
-
-Move into the backend directory:
+From the project root:
 
 ```bash
 cd backend
-```
-
-Install Python dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
 
@@ -683,42 +491,29 @@ Create a `.env` file in the project root:
 ```env
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_KEY=your_supabase_anon_or_publishable_key
-
 CORS_ORIGINS=http://localhost:3000
 
+# Required only for public demo functionality and authenticated E2E tests
 DEMO_EMAIL=
 DEMO_PASSWORD=
 ```
 
-`DEMO_EMAIL` and `DEMO_PASSWORD` are only required when running the public demo functionality and authenticated E2E tests.
+Demo credentials are only needed when running the public demo functionality and authenticated E2E tests. They must remain server-side and must never be exposed through frontend environment variables.
 
-Demo credentials must remain server-side and must never be exposed through frontend environment variables.
-
-Start the FastAPI development server:
+Start FastAPI:
 
 ```bash
 python -m uvicorn api:app --reload
 ```
 
-The backend normally runs on:
+Backend URL: `http://127.0.0.1:8000`
 
-```text
-http://127.0.0.1:8000
-```
+### 4. Frontend
 
----
-
-## Frontend
-
-Move into the frontend directory:
+In a separate terminal, from the project root:
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
 ```
 
@@ -731,28 +526,23 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Start the frontend:
+Start Next.js:
 
 ```bash
 npm run dev
 ```
 
-The application normally runs on:
-
-```text
-http://localhost:3000
-```
+Frontend URL: `http://localhost:3000`
 
 ---
 
-# Running the Tests
+## Running Tests Locally
 
-## Backend tests
+### Backend
 
-From the project root:
+From `backend/`:
 
 ```bash
-cd backend
 python -m pytest tests
 ```
 
@@ -762,65 +552,22 @@ With coverage:
 python -m pytest tests --cov=api --cov=auth --cov=database --cov=calculations --cov=demo --cov=imports --cov=routes --cov=schemas --cov=rate_limit --cov-branch --cov-report=term-missing
 ```
 
-## Integration tests
+Supabase integration tests are located in `backend/tests/integration/` and require the relevant test-user credentials and database configuration.
 
-Supabase integration tests require the relevant test-user credentials to be configured in the environment.
-
-They are located in:
-
-```text
-backend/tests/integration/
-```
-
----
-
-## Frontend tests
+### Frontend
 
 From `frontend/`:
 
 ```bash
 npm test -- --run
-```
-
-With coverage:
-
-```bash
 npm test -- --run --coverage
-```
-
-Run linting:
-
-```bash
 npm run lint
-```
-
-Run the production build:
-
-```bash
 npm run build
 ```
 
----
+### Playwright end-to-end tests
 
-## End-to-end tests
-
-Playwright E2E tests require both the FastAPI backend and Next.js frontend to be running locally.
-
-Start the backend from the project root:
-
-```bash
-cd backend
-python -m uvicorn api:app --reload
-```
-
-In another terminal, start the frontend:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Then, from `frontend/`, run the authenticated Chromium E2E suite:
+Both FastAPI and Next.js must be running. From `frontend/`:
 
 ```bash
 npx playwright test --project=chromium
@@ -832,7 +579,7 @@ On Windows PowerShell:
 npx.cmd playwright test --project=chromium
 ```
 
-The Chromium project automatically runs the authentication setup first and reuses the generated browser session for authenticated E2E tests.
+The Chromium project runs the authentication setup first and reuses the generated browser session for authenticated tests.
 
 To test the public demo-login flow separately from an unauthenticated browser state:
 
@@ -846,25 +593,19 @@ On Windows PowerShell:
 npx.cmd playwright test --project=demo-login
 ```
 
-Playwright saves the generated authenticated browser state under:
-
-```text
-frontend/playwright/.auth/
-```
-
-This directory is ignored by Git and must not be committed.
-
 To open the latest Playwright HTML report:
 
 ```bash
 npx playwright show-report
 ```
 
+The generated browser state is stored in `frontend/playwright/.auth/`. It is ignored by Git and must not be committed.
+
 ---
 
-# Deployment
+## Deployment
 
-The application is deployed using separate frontend and backend Vercel projects.
+The frontend and backend are deployed as separate Vercel projects. Supabase provides authentication and PostgreSQL.
 
 ```text
 Vercel
@@ -876,15 +617,13 @@ Supabase
 └── PostgreSQL
 ```
 
-Production configuration is stored in environment variables rather than hardcoded into the application.
-
-Sensitive values such as demo credentials are stored only in server-side deployment and GitHub Actions secrets.
+Production configuration is supplied through environment variables. Sensitive values, including demo credentials, are stored in server-side deployment settings and GitHub Actions secrets rather than hardcoded or committed to the repository.
 
 ---
 
-# Project Evolution
+## Project Evolution
 
-One of the main goals of the project became understanding how a small program evolves into a complete web application.
+The project grew incrementally from a small Python CLI into a full-stack application. Each iteration introduced a new requirement or architectural layer.
 
 ```text
 Python CLI
@@ -897,21 +636,15 @@ FastAPI backend
     ↓
 Next.js frontend
     ↓
-Authentication
+Authentication and multiple accounts
     ↓
-Multiple trading accounts
+Charts and performance statistics
     ↓
-Charts and statistics
-    ↓
-Validation
-    ↓
-Automated testing
+Validation and automated tests
     ↓
 RLS integration testing
     ↓
-Deployment
-    ↓
-Public demo system
+Deployment and public demo
     ↓
 Automatic CSV import
     ↓
@@ -924,398 +657,105 @@ API rate limiting
 Playwright end-to-end testing
 ```
 
-## 1. Python CLI
+### From CLI to web application
 
-The first version was a command-line application written entirely in Python.
+The first version was a Python command-line application. It handled adding, viewing, editing and deleting trades, calculating R-multiples, generating aggregate statistics and validating input. Trades were initially stored locally.
 
-It handled the core trading logic:
+As the project grew, local persistence was replaced with Supabase. This introduced remote storage, CRUD operations, generated IDs, database records and relationships.
 
-- adding trades
-- viewing trades
-- editing trades
-- deleting trades
-- calculating R-multiple
-- calculating aggregate statistics
-- validating user input
+FastAPI was then introduced to separate HTTP endpoints, authentication, validation, calculations and database operations from the user interface. As the backend grew, route handlers, Pydantic schemas and persistence logic were organised into dedicated modules.
 
-At this stage, trades were stored locally.
+The command-line interface was replaced by a Next.js, React and TypeScript frontend, introducing reusable components, application state, controlled forms, asynchronous requests, authentication state, responsive layouts, charts and loading/error states.
 
-The initial goal was to make the domain logic work correctly before introducing a web architecture.
+### Multi-user accounts and analytics
 
----
+Supabase Auth transformed the application from a single-user journal into a multi-user system. User-owned records, bearer-token verification and Row Level Security were added to protect account and trade data.
 
-## 2. Moving persistence to Supabase
+Multiple trading accounts were introduced so users could organise trades separately and analyse performance per account. Account data includes details such as account name, starting balance, currency, broker and account type.
 
-The next step replaced local storage with a real database.
+The application then expanded beyond trade storage with P/L tracking, R-multiple analytics, performance charts, date filters and the monthly calendar.
 
-This introduced:
+### Reliability and testing
 
-- remote persistence
-- CRUD operations
-- generated IDs
-- environment-based credentials
-- database records and relationships
+Validation was progressively added to the frontend and backend. Database calls were centralised so dependency failures could be converted into predictable API responses.
 
-This was the first major architectural change in the project.
+Testing expanded from individual functions and components to API tests, Supabase integration tests, RLS checks and Playwright browser workflows. GitHub Actions now runs the relevant checks automatically.
+
+### Import, scale and demo access
+
+CSV import was added to support broker exports with different formats. Dedicated backend modules handle file reading, column mapping, normalisation and row validation before bulk persistence.
+
+As trade histories grew, server-side pagination and bounded analytics queries were introduced. The monthly calendar moved daily aggregation to the backend, and SlowAPI rate limiting was added to protect public and authenticated endpoints.
+
+Finally, the public demo system made it possible to evaluate the deployed application without registration. Activity tracking and scheduled GitHub Actions resets keep its shared sample dataset available for visitors.
 
 ---
 
-## 3. Separating the backend with FastAPI
+## What I Learned
 
-As the project grew, database operations and application logic were separated from the user interface.
+Building the project provided practical experience across the full application lifecycle.
 
-A FastAPI backend was introduced to expose HTTP endpoints for accounts and trades.
+### Software design
 
-```text
-Browser
-   ↓
-Next.js
-   ↓ HTTP
-FastAPI
-   ↓
-Supabase
-```
+- Separating user interface, API routing, authentication, validation, business logic, persistence, testing and deployment
+- Refactoring a growing application into modules with clearer responsibilities
+- Understanding how requirements influence architecture as a project evolves
 
-The backend became responsible for:
+### Backend development
 
-- authentication
-- validation
-- trading calculations
-- database operations
-- controlled error handling
-- HTTP responses
+- REST APIs and HTTP request/response handling
+- FastAPI routers and dependency injection
+- Bearer-token authentication
+- Pydantic request and response models
+- Server-side validation and exception handling
+- API rate limiting and middleware
+- Database access and environment-based configuration
 
-As the backend grew, its HTTP endpoints, validation models and persistence logic were further separated into dedicated routers, schemas and database modules.
+### Frontend development
 
----
+- React components, props and state
+- Event handlers and controlled forms
+- Asynchronous API requests
+- Conditional rendering and loading/error states
+- TypeScript and responsive layouts
+- Charts and data visualisation
 
-## 4. Building the web frontend
+### Databases and security
 
-The command-line interface was replaced by a web interface built with Next.js, React and TypeScript.
+- Persistent relational data
+- CRUD operations and user-owned records
+- Supabase authentication
+- PostgreSQL Row Level Security
+- Cross-user isolation and integration testing
 
-The frontend introduced:
+### Testing and debugging
 
-- reusable React components
-- application state
-- controlled forms
-- asynchronous requests
-- authentication state
-- responsive layouts
-- charts
-- loading states
-- error states
+- Unit and component testing
+- Mocking external dependencies
+- API and integration testing
+- Parameterised tests
+- Rate-limit behavioural testing
+- Browser end-to-end testing
+- Shared browser authentication state
+- Test-data isolation and cleanup
+- Deterministic E2E assertions
+- CI execution and code coverage
 
----
-
-## 5. Authentication and multi-user data
-
-Supabase Auth transformed the project from a single-user journal into a multi-user application.
-
-Authenticated API requests contain bearer tokens verified by the backend.
-
-Accounts and trades are associated with their owners, while Row Level Security provides database-level isolation.
+A significant part of the work involved debugging interactions between the frontend, backend, authentication layer and database rather than treating each layer independently.
 
 ---
 
-## 6. Multiple trading accounts
+## Current Status and Future Improvements
 
-The original journal treated all trades as a single dataset.
+The original CLI has been superseded by the full-stack web application. The current version includes authentication, account and trade management, CSV import, server-side pagination, date filtering, backend analytics, charts, a monthly calendar, validation, RLS, API rate limiting, automated tests, CI, deployment and public demo access.
 
-The web application introduced separate trading accounts containing information such as:
+Potential future improvements include:
 
-- account name
-- starting balance
-- currency
-- broker
-- account type
-
-Trades belong to individual accounts, allowing performance to be analysed separately.
-
----
-
-## 7. Analytics and visualisation
-
-The application moved beyond storing trades and began analysing them.
-
-Statistics and performance charts were added to make trading behaviour easier to evaluate over time.
-
----
-
-## 8. Stronger validation and error handling
-
-Validation was progressively added to both the frontend and backend.
-
-Database calls were also centralised so dependency failures could be converted into predictable API responses.
-
----
-
-## 9. Automated testing
-
-Testing expanded alongside the application.
-
-Unit tests, component tests, API tests and integration tests now protect behaviour across the frontend, backend and database security layers.
-
----
-
-## 10. Deployment and public demo
-
-The frontend and backend were deployed separately on Vercel.
-
-A public demo flow was then added so the application could be evaluated without creating an account.
-
-The demo includes:
-
-- server-side demo authentication
-- seeded trading data
-- activity tracking
-- automatic restoration
-- scheduled GitHub Actions maintenance
-- dedicated automated tests
-
----
-
-## 11. Automatic CSV import
-
-The journal now accepts CSV exports from different brokers and trading platforms without requiring one fixed template.
-
-Dedicated backend modules handle file reading, column mapping, value normalisation and row validation. The authenticated frontend import page sends only the selected account and file; format detection and validation remain backend responsibilities.
-
-This added automatic format detection, optional stop-loss handling, account ownership checks, bulk persistence and complete backend and frontend test coverage.
-
----
-
-## 12. Server-side pagination and date filtering
-
-As trade histories grow, sending every record to the browser becomes inefficient. The trade-history endpoint now returns 20 records per page together with the total record and page counts.
-
-Dashboard analytics remain based on the complete selected dataset. The backend loads only the fields required for statistics in bounded batches, calculates the results centrally and returns the finished aggregate values and performance series to the frontend.
-
-Date filtering is implemented across the database, API and frontend layers. Users can select all time, the last 30 days, the last 90 days or a custom range, and the same boundaries are applied to dashboard statistics, chart data, recent trades and paginated trade history.
-
----
-
-## 13. Monthly trading calendar
-
-The dashboard now includes a monthly calendar built with React DayPicker. It presents daily P/L, R-multiple totals and trade counts while adapting its layout to desktop and mobile screens.
-
-Calendar aggregation is performed by the backend across the complete requested month and exposed through a dedicated authenticated endpoint. Calendar data reloads when the user changes account or month and after successful trade creation, editing or deletion.
-
----
-
-## 14. API rate limiting
-
-Rate limiting was added to protect the backend from excessive request traffic.
-
-The public demo-login endpoint is limited using the client IP address because no authenticated user identity is available before the demo session is created.
-
-Protected endpoints use the authenticated Supabase user ID as their rate-limit key, giving each authenticated user an independent request bucket.
-
-SlowAPI handles limit enforcement and converts exceeded limits into `429 Too Many Requests` responses.
-
-Dedicated tests verify both rate-limit enforcement and isolation between separate authenticated users.
-
----
-
-## 15. Playwright end-to-end testing
-
-Playwright was added to verify complete user journeys through the running application.
-
-Unlike isolated frontend or backend tests, these tests exercise multiple application layers together:
-
-```text
-Playwright browser
-       ↓
-Next.js frontend
-       ↓
-FastAPI backend
-       ↓
-Supabase
-       ↓
-Rendered result
-```
-
-The E2E suite covers core successful flows as well as validation failures.
-
-Authenticated tests share a saved browser authentication state generated by a dedicated setup project. This avoids repeatedly calling the rate-limited public demo-login endpoint while preserving realistic browser-level testing.
-
-The demo-login flow remains isolated in its own unauthenticated Playwright project so the login process itself is independently tested.
-
-Temporary accounts and trade data are created for individual tests and cleaned up afterwards, keeping results deterministic and reducing dependence on pre-existing demo data.
-
-A dedicated GitHub Actions workflow runs the Chromium E2E suite automatically on pushes and pull requests.
-
----
-
-# Legacy CLI
-
-The `legacy-cli/` directory contains the original command-line implementation.
-
-It is intentionally kept as a historical record of the project's evolution and is no longer the actively maintained application.
-
-Keeping the original implementation makes it possible to compare the initial procedural Python version with the current authenticated, tested and deployed full-stack architecture.
-
----
-
-# What I Learned
-
-This project began while I was learning programming fundamentals, but its scope changed significantly as development continued.
-
-Building the different versions provided practical experience across the complete application lifecycle.
-
-## Software design
-
-The project demonstrated how code that works well in a small script can become difficult to maintain as requirements grow.
-
-The application gradually separated responsibilities into:
-
-- user interface
-- API routing
-- authentication
-- validation
-- business logic
-- persistence
-- testing
-- deployment
-
-## Backend development
-
-The FastAPI backend provided practical experience with:
-
-- REST APIs
-- HTTP requests and responses
-- dependency injection
-- bearer-token authentication
-- Pydantic models
-- server-side validation
-- exception handling
-- API rate limiting
-- request middleware
-- database access
-- modular route organisation
-- environment-based configuration
-
-## Frontend development
-
-Building the Next.js application involved:
-
-- React components
-- props
-- state
-- event handlers
-- controlled forms
-- asynchronous requests
-- conditional rendering
-- TypeScript
-- responsive layouts
-- charts and data visualisation
-
-## Databases and security
-
-Moving from local files to Supabase introduced:
-
-- persistent storage
-- relational data
-- user-owned records
-- CRUD operations
-- authentication
-- Row Level Security
-- cross-user isolation testing
-
-## Testing and debugging
-
-Testing became increasingly important as the system grew.
-
-The project provided practical experience with:
-
-- reproducing bugs with tests
-- mocking external dependencies
-- API testing
-- React interaction testing
-- parameterised tests
-- integration testing
-- rate-limit behavioural testing
-- browser end-to-end testing
-- shared browser authentication state
-- test-data isolation and cleanup
-- deterministic E2E assertions
-- CI execution of browser tests
-- code coverage
-- regression prevention
-
-A large part of development involved debugging interactions between the frontend, backend, authentication layer and database rather than treating each layer independently.
-
-## Full-stack development
-
-The most important outcome was understanding how the different layers of a web application communicate.
-
-```text
-User action
-    ↓
-React state
-    ↓
-HTTP request
-    ↓
-FastAPI router
-    ↓
-Authentication + validation
-    ↓
-Database query
-    ↓
-API response
-    ↓
-Frontend update
-```
-
-End-to-end testing extended that understanding by verifying the entire path from a real browser interaction through the application stack and back to the rendered UI.
-
----
-
-# Current Status
-
-The original CLI has been superseded by the full-stack web application.
-
-The current version includes the main functionality required for a usable trading journal:
-
-- authentication
-- account management
-- trade management
-- automatic CSV trade import
-- server-side trade pagination
-- preset and custom date-range filtering
-- backend statistics across complete filtered datasets
-- performance statistics
-- charts
-- monthly trading calendar
-- responsive layouts
-- data validation
-- database persistence
-- Row Level Security
-- API rate limiting
-- automated unit and component testing
-- Supabase integration and RLS testing
-- Playwright end-to-end testing
-- automated E2E execution in GitHub Actions
-- controlled API error handling
-- deployed frontend and backend
-- public demo access
-- automatic demo-data restoration
-
-The project can continue to evolve, but the current version represents a complete end-to-end full-stack implementation.
-
----
-
-# Possible Future Improvements
-
-Potential future iterations include:
-
-- more advanced trading analytics
-- additional filters
-- calendar day details and trade drill-down
-- richer account statistics
-- improved dashboard visualisations
+- More advanced trading analytics and account statistics
+- Calendar day details and trade drill-down
 - CSV export
-- refactoring larger frontend components into smaller reusable pieces
-- production observability and structured logging
-- broader cross-browser E2E coverage
-- shared rate-limit storage for multi-instance deployments
-- performance improvements for larger datasets
+- Further dashboard visualisation improvements
+- Production observability and structured logging
+- Broader cross-browser E2E coverage
+- Shared rate-limit storage for multi-instance deployments
+- Performance improvements for larger datasets
