@@ -60,7 +60,7 @@ export default function Sidebar({ userEmail, onLogout }: SidebarProps) {
 
       <aside
         className={`
-                    fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200 bg-white px-5 py-7
+                    fixed inset-y-0 left-0 z-50 w-[clamp(220px,17vw,280px)] border-r border-slate-200 bg-white px-5 py-7
                     transition-transform duration-200
                     md:sticky md:top-0 md:h-screen md:self-start md:z-auto md:shrink-0 md:translate-x-0
                     ${isOpen ? "translate-x-0" : "-translate-x-full"}
